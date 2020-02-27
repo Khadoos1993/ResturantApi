@@ -21,9 +21,5 @@ namespace ResturantApi.Controllers
             _options = options.Value;
         }
 
-        //public IActionResult UploadJsonData()
-        //{
-
-        //}
     }
 }

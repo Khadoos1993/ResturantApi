@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResturantApi", "ResturantAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResturantDAL", "ResturantDAL\ResturantDAL.csproj", "{B4628F89-E0F4-4E6F-8BD9-5CFC13796B64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResturantFunctionApp", "ResturantFunctionApp\ResturantFunctionApp.csproj", "{ECCEB003-E108-43A2-B7C9-CA1CDC4CD2A1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{B4628F89-E0F4-4E6F-8BD9-5CFC13796B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4628F89-E0F4-4E6F-8BD9-5CFC13796B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4628F89-E0F4-4E6F-8BD9-5CFC13796B64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ECCEB003-E108-43A2-B7C9-CA1CDC4CD2A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ECCEB003-E108-43A2-B7C9-CA1CDC4CD2A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ECCEB003-E108-43A2-B7C9-CA1CDC4CD2A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ECCEB003-E108-43A2-B7C9-CA1CDC4CD2A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
