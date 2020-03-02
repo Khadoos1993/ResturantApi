@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,6 @@ using ResturantDAL;
 
 namespace ResturantApi.Controllers
 {
-    [Authorize]
     [Route("api/resturants")]
     [ApiController]
     public class ResturantsControllerApi : ControllerBase
@@ -32,10 +32,13 @@ namespace ResturantApi.Controllers
         {
             try
             {
+                _logger.LogInformation("Give all resturants json data");
+                var resturant = _mongoDbDataContext.Get();
+                return Ok(resturant);
                 //IFileInfo fileInfo = _fileProvider.GetFileInfo();
                 //var readStream = fileInfo.CreateReadStream();
-                _logger.LogInformation("Give all resturants json data");
-                return File("resturant-data.json", "application/json");
+                
+                //return File("resturant-data.json", "application/json");
             }
             catch (Exception ex)
             {
@@ -43,23 +46,20 @@ namespace ResturantApi.Controllers
             }
         }
 
-        private bool IsExist(string id)
-        {
-            return _mongoDbDataContext.GetResturant.Find(_ => _.ObjectId == ObjectId.Parse(id)).Any();
-        }
-
-        [HttpGet("{id}", Name = "GetResurant")]
-        public async Task<ActionResult> GetResturant(string id)
+        [HttpGet("{id:Length(24)}", Name = "GetResurant")]
+        public ActionResult<Resturant> GetResturant(string id)
         {
             try
             {
                 if (!ObjectId.TryParse(id, out var validId))
                     return BadRequest();
-                FilterDefinition<Resturant> filter = Builders<Resturant>.Filter.Eq("_id", validId);
-                var result = await _mongoDbDataContext.GetResturant.Find(filter)
-                    .Project(x => new { x.ObjectId, x.Image, x.Name, x.Neighborhood, x.CuisineType })
-                    .ToListAsync();
-                if (result.Count == 0)
+                //FilterDefinition<Resturant> filter = Builders<Resturant>.Filter.Eq("_id", validId);
+                var result = _mongoDbDataContext.Get(validId);
+
+                //var result = await _mongoDbDataContext.GetResturant.Find(filter)
+                //    .Project(x => new { x.ObjectId, x.Image, x.Name, x.Neighborhood, x.CuisineType })
+                //    .ToListAsync();
+                if (result == null)
                     return NotFound();
                 return Ok(result);
             }
@@ -68,11 +68,10 @@ namespace ResturantApi.Controllers
                 _logger.LogError(ex, "Error while connecting with mongo database");
                 return StatusCode(500, ex);
             }
-
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody]Resturant model)
+        public ActionResult<Resturant> Create([FromBody]Resturant model)
         {
             try
             {
@@ -83,14 +82,48 @@ namespace ResturantApi.Controllers
                 //    new CreateIndexModel<Resturant>(
                 //        Builders<Resturant>.IndexKeys.Ascending(x => x.Name),
                 //        new CreateIndexOptions() { Unique = true }));
-                await _mongoDbDataContext.GetResturant.InsertOneAsync(model);
-                return CreatedAtRoute("GetResurant", new { id = model.ObjectId }, model);
+                _mongoDbDataContext.Create(model);
+                return CreatedAtRoute("GetResurant", new { id = model.ObjectId.ToString() }, model);
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex, "Error while connecting with mongo database");
                 return StatusCode(500, ex);
             }
+        }
+
+        [HttpPut("{id:length(24)}")]
+        public IActionResult Update(string id, [FromBody]Resturant bookIn)
+        {
+            if (!ObjectId.TryParse(id, out var validId))
+                return BadRequest();
+            var resturant = _mongoDbDataContext.Get(validId);
+
+            if (resturant == null)
+            {
+                return NotFound();
+            }
+
+            _mongoDbDataContext.Update(validId, resturant);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:length(24)}")]
+        public IActionResult Delete(string id)
+        {
+            if (!ObjectId.TryParse(id, out var validId))
+                return BadRequest();
+            //var resturant = _mongoDbDataContext.Get(validId);
+
+            //if (resturant == null)
+            //{
+            //    return NotFound();
+            //}
+
+            _mongoDbDataContext.Remove(validId);
+
+            return NoContent();
         }
     }
 }

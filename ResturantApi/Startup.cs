@@ -88,6 +88,7 @@ namespace ResturantApi
             }
             app.UseStaticFiles();
             app.UseStatusCodePages();
+            app.UseCors(c=>c.AllowAnyOrigin().AllowAnyHeader());
             app.UseSession();
             app.Use(async (context, next) =>
             {
@@ -96,7 +97,7 @@ namespace ResturantApi
                 {
                     context.Request.Headers.Add("Authorization", "Bearer " + JWToken);
                 }
-                await next();
+                await next.Invoke();
             });
             //Add JWToken Authentication service
             app.UseAuthentication();
